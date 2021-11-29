@@ -1,4 +1,4 @@
-# applieddatascience2
+# ADS1 - Assignment 2
 
 TITLE OF PROJECT = 
 
