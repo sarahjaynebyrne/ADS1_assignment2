@@ -1,17 +1,6 @@
 # ADS1 - Assignment 2
 
-TITLE OF PROJECT = 
+This branch contains the older versions of the code:
 
-This assignment was conducted using a dataset from World Bank the website link -> https://data.worldbank.org/topic/climate-change.
-
-I have focused on exploring statistics and trends within a dataset.  Applying PEP-8 guidelines to my code.
-
-The primary aim was to observe y. Additionally, the study utilised z.
-
-This project used the following modules:
-
-- pandas
-- matplotlib.pyplot
-- numpy
-- scipy.stats
-- seaborn 
+- version 1 is using only 1 dataframe that is all the countries and all the indicators (this was too much to process) so split the data 
+- version 2 onwards is using multiple dataframes for manipulation and correlation analysis
