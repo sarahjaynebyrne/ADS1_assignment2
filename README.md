@@ -14,4 +14,5 @@ This project used the following modules:
 - matplotlib.pyplot
 - numpy
 - scipy.stats
-- seaborn 
+
+#BeKind :)
