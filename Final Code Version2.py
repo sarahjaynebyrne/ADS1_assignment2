@@ -913,15 +913,14 @@ new dataset that I observed to have several NA values.
 '''
 
 df3 = pd.read_csv('C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 2/forest area.csv',
-                  header = 2,    # it removes the top line of jargon as its not data
-                  engine = "python",
-                  dtype = "str")
+                  header = 4,    # it removes the top 4 lines of jargon as its not data
+                  engine = "python")
 
 # renaming a column
 df3.loc[254, 'Country Name'] = "Venezuela"
 
 # removing unwanted columns
-df3.drop(['Country Code', 'Indicator Name', 'Indicator Code', '2019', '2020', 'Unnamed: 65'],
+df3.drop(['Country Code', 'Indicator Name', 'Indicator Code'],
         axis = 1,
         inplace = True)
 
@@ -943,6 +942,90 @@ sa_df3 = df3[(df3['Country Name'] == 'Argentina') |
 sa_df3.reset_index(inplace = True,
                       drop = True)
 
+
+""" Summary statistics of the Forest Area Dataset """
+
+# performing pre-processing and basic statistics using functions
+#print(pre_processing(sa_for_df))
+
+
+""" Shapiro-Wilk test for normality on SA Forest Area dataset """
+
+# copying the dataset
+sa_for_df1 = sa_df3.copy()
+print(sa_for_df1.head())
+
+from scipy.stats import shapiro
+
+# performing shapiro-wilk test
+shapiro_test3 = (sa_for_df1.groupby('Country Name')
+                 .apply(lambda x: pd.Series(shapiro(x), index = ['W', 'P'])))
+
+# printing the results of the test to the console
+print(shapiro_test3)
+
+'''
+Countries accept null hypothesis: 
+    Bolivia, Colombia, Ecuador, Paraguay, Peru, 
+    Uruguay, and Venezuela
+(countries are normality distributed across the years)
+
+Countries reject null hypothesis: 
+    Argentina, Brazil, Chile, Guyana, and Suriname
+(countries are not normality distributed across the years)
+'''
+
+
+""" Skewness and Kurtosis on SA Population dataset """
+
+# performing shapiro-wilk test
+skewness_test3 = (sa_for_df1.groupby('Country Name')
+                  .apply(lambda x: pd.Series(skew(x))))
+
+kurtosis_test3 = (sa_for_df1.groupby('Country Name')
+                  .apply(lambda x: pd.Series(kurtosis(x))))
+
+# printing the results of the test to the console
+print(skewness_test3, '\n', 
+      kurtosis_test3)
+
+
+""" Boxplot to look for outliers in each COUNTRY (over the years) """
+
+sa_for_box = sa_for_df1.set_index('Country Name').transpose()
+
+# resetting the index
+sa_for_box.reset_index(level = 0,
+                       inplace = True)
+
+# the column had wrong name so have to rename
+sa_for_box.rename(columns = {"index": "Year"},
+                  inplace = True)
+
+# plotting the boxplot
+fig14 = sa_for_box.boxplot(rot = 45,
+                           fontsize = 10,
+                           grid = True,
+                           color = 'navy')
+
+# adding extra things for visualisation
+plt.title('The Forest Area of South American Countries')
+plt.ylabel('Forest Area (in millions)')
+plt.xlabel('Country')
+
+# show the graph
+plt.show()
+
+# saving the figure
+plt.savefig('C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 2/figure14.png')
+
+'''
+from the boxplot there appears to have no outliers above 
+or below the boxplots for the countries.
+'''
+
+""" Interpolation Manipulation """
+
 # transposing data for ease of manipulation
 sa_for_df = sa_df3.set_index('Country Name').transpose()
 
@@ -954,30 +1037,30 @@ sa_for_df.reset_index(level = 0,
 sa_for_df.rename(columns = {"index": "Year"},
                  inplace = True)
 
-# performing pre-processing and basic statistics using function
-print(pre_processing(sa_for_df))
+# copying the original data
+sa_for_df2 = sa_for_df.copy()
 
 # dropping any NA values
-sa_for_df.dropna(axis = 0,
+sa_for_df2.dropna(axis = 0,
                  inplace = True)
 
 # changing some values to NA in the dataset
-sa_for_df['Argentina'].replace(['348388', '333780', '317960', '299906', '290970', '288990'], np.NaN,
-                               inplace = True)
+sa_for_df2['Argentina'].replace(['348388', '333780', '317960', '299906', '290970', '288990'], np.NaN,
+                                inplace = True)
 
 # copying the data for subplots
-sa_for_df2 = sa_for_df.copy()
 sa_for_df3 = sa_for_df.copy()
 sa_for_df4 = sa_for_df.copy()
+sa_for_df5 = sa_for_df.copy()
 
 # performing interpolation on the SA country: Argentina
-sa_for_df2['Argentina'].interpolate(method = 'linear',
+sa_for_df3['Argentina'].interpolate(method = 'linear',
                                    limit_direction = 'backward',
                                    inplace = True)
-sa_for_df3['Argentina'].interpolate(method = 'nearest',
+sa_for_df4['Argentina'].interpolate(method = 'nearest',
                                     limit_direction = 'backward',
                                     inplace = True)
-sa_for_df4['Argentina'].interpolate(method = 'cubic',
+sa_for_df5['Argentina'].interpolate(method = 'cubic',
                                     limit_direction = 'backward',
                                     inplace = True)
 
@@ -988,17 +1071,17 @@ fig10, ax10 = plt.subplots(2,2,
                          sharex = True)
 
 # plotting using subplots
-ax10[0,0].plot(sa_for_df['Year'],
-              sa_for_df['Argentina'],
+ax10[0,0].plot(sa_for_df2['Year'],
+              sa_for_df2['Argentina'],
               color = 'purple')
-ax10[0,1].plot(sa_for_df2['Year'],
-              sa_for_df2['Argentina'], 
-              color = 'pink')
-ax10[1,0].plot(sa_for_df3['Year'],
+ax10[0,1].plot(sa_for_df3['Year'],
               sa_for_df3['Argentina'], 
-              color = 'green')
-ax10[1,1].plot(sa_for_df4['Year'],
+              color = 'pink')
+ax10[1,0].plot(sa_for_df4['Year'],
               sa_for_df4['Argentina'], 
+              color = 'green')
+ax10[1,1].plot(sa_for_df5['Year'],
+              sa_for_df5['Argentina'], 
               color = 'orange')
 
 # setting extras for visualisation of figure 10
