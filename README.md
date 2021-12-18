@@ -15,9 +15,10 @@ This project used the following modules:
 - numpy
 - scipy.stats
 
-This repository contains 3 branches:
+This repository contains 4 branches:
 1. main branch -> contains the final version of code and PDF A4 pager
 2. figures (jpeg format) -> contains the figures the code produces
 3. code -> older versions of the code as proof that the code improved overtime
+4. datasets -> the datasets used in the code (csv format) to use yourself :)
 
 #BeKind :)
